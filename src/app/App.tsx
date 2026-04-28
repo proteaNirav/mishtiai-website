@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Hero } from "./components/Hero";
 import { SystemGuarantees } from "./components/SystemGuarantees";
 import { Problem } from "./components/Problem";
@@ -22,9 +22,13 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPartnerModalOpen, setIsPartnerModalOpen] = useState(false);
 
+  const scrollToAccess = () => {
+    document.getElementById("access")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div>
-      <Header onRequestAccess={() => setIsModalOpen(true)} />{/* Header */}
+      <Header onRequestAccess={() => scrollToAccess()} />{/* Header */}
       <div
         style={{
           display: "flex",
@@ -57,7 +61,7 @@ export default function App() {
 
       {/* Main Content */}
       <div className="min-h-screen bg-background">
-        <Hero onRequestAccess={() => setIsModalOpen(true)} />
+        <Hero onRequestAccess={() => scrollToAccess()} />
         <SystemGuarantees />
         <Problem />
         <Approach />
@@ -71,7 +75,7 @@ export default function App() {
         <Roadmap />
         <WhoIsThisFor />
         <Access
-          onRequestAccess={() => setIsModalOpen(true)}
+          onRequestAccess={() => scrollToAccess()}
           onPartnerClick={() => setIsPartnerModalOpen(true)}
         />
         <Footer />
@@ -89,5 +93,6 @@ export default function App() {
     </div>
   );
 }
+
 
 

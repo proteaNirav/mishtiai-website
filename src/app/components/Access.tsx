@@ -1,4 +1,4 @@
-﻿import React from "react";
+﻿import React, { useState } from "react";
 
 interface AccessProps {
   onRequestAccess?: () => void;
@@ -6,6 +6,35 @@ interface AccessProps {
 }
 
 export function Access({}: AccessProps) {
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus("sending");
+
+    const form = event.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      const response = await fetch("https://formspree.io/f/mvzdjvlw", {
+        method: "POST",
+        body: data,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setStatus("success");
+        form.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <section id="access" className="py-24 px-6 bg-background">
       <div className="max-w-[800px] mx-auto text-center">
@@ -21,11 +50,7 @@ export function Access({}: AccessProps) {
           Tell us about your organization and governed AI use case.
         </p>
 
-        <form
-          action="https://formspree.io/f/mvzdjvlw"
-          method="POST"
-          className="space-y-4 text-left"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4 text-left">
           <input type="hidden" name="_subject" value="New Mishti AI Access Request" />
 
           <input
@@ -61,10 +86,23 @@ export function Access({}: AccessProps) {
 
           <button
             type="submit"
-            className="w-full py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/25"
+            disabled={status === "sending"}
+            className="w-full py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 disabled:opacity-60"
           >
-            Submit Access Request
+            {status === "sending" ? "Submitting..." : "Submit Access Request"}
           </button>
+
+          {status === "success" && (
+            <p className="text-[#14f195] text-center">
+              Request received. We will review and respond shortly.
+            </p>
+          )}
+
+          {status === "error" && (
+            <p className="text-red-400 text-center">
+              Something went wrong. Please email connect@mishtiai.in.
+            </p>
+          )}
         </form>
       </div>
     </section>
