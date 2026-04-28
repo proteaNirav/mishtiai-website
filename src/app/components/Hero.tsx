@@ -1,4 +1,4 @@
-import { ArrowRight, Lock, Activity } from "lucide-react";
+﻿import { ArrowRight, Lock, Activity } from "lucide-react";
 import { NetworkDiagram } from "./NetworkDiagram";
 
 interface HeroProps {
@@ -58,12 +58,12 @@ export function Hero({ onRequestAccess }: HeroProps) {
                 onClick={onRequestAccess}
                 className="group px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold transition-all shadow-lg shadow-primary/25 hover:shadow-primary/50 hover:scale-[1.02] flex items-center justify-center gap-3"
               >
-                Request Early Access
+                Get Controlled AI Access
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               <button className="px-8 py-4 bg-card/50 text-foreground rounded-lg font-semibold transition-all border border-border hover:border-primary/40 backdrop-blur-md hover:bg-card/80 flex items-center justify-center gap-3">
                 <Lock className="w-5 h-5" />
-                View Architecture
+                See How It Works
               </button>
             </div>
 
@@ -99,3 +99,4 @@ export function Hero({ onRequestAccess }: HeroProps) {
     </section>
   );
 }
+

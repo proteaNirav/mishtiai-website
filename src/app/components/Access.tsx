@@ -43,11 +43,11 @@ export function Access({}: AccessProps) {
         </p>
 
         <h2 className="text-3xl md:text-5xl font-bold mb-6">
-          Request Access to Mishti AI
+          Get Access to Controlled AI Execution
         </h2>
 
         <p className="text-muted-foreground mb-10">
-          Tell us about your organization and governed AI use case.
+          We will review your use case and give you controlled access to Mishti AI within 24 hours.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-left">
@@ -108,3 +108,4 @@ export function Access({}: AccessProps) {
     </section>
   );
 }
+
