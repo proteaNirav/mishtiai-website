@@ -50,7 +50,16 @@ export function Access({}: AccessProps) {
           We will review your use case and give you controlled access to Mishti AI within 24 hours.
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-left">
+        <div className="mb-10 text-left max-w-[700px] mx-auto">
+  <h3 className="text-lg font-semibold mb-4">What happens next?</h3>
+  <ul className="text-sm text-muted-foreground space-y-2">
+    <li>• We review your use case and system requirements</li>
+    <li>• We evaluate fit for governed AI execution</li>
+    <li>• You receive a response within 24 hours</li>
+    <li>• Selected teams get guided onboarding access</li>
+  </ul>
+</div>
+<form onSubmit={handleSubmit} className="space-y-4 text-left">
           <input type="hidden" name="_subject" value="New Mishti AI Access Request" />
 
           <input
@@ -108,4 +117,5 @@ export function Access({}: AccessProps) {
     </section>
   );
 }
+
 
