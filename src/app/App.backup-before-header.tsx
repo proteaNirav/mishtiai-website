@@ -14,7 +14,6 @@ import { Roadmap } from "./components/Roadmap";
 import { WhoIsThisFor } from "./components/WhoIsThisFor";
 import { Access } from "./components/Access";
 import { Footer } from "./components/Footer";
-import { Header } from "./components/Header";
 import { AccessModal } from "./components/AccessModal";
 import { PartnerModal } from "./components/PartnerModal";
 
@@ -24,7 +23,7 @@ export default function App() {
 
   return (
     <div>
-      <Header onRequestAccess={() => setIsModalOpen(true)} />{/* Header */}
+            {/* Header */}
       <div
         style={{
           display: "flex",
@@ -89,5 +88,3 @@ export default function App() {
     </div>
   );
 }
-
-

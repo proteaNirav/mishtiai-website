@@ -1,38 +1,35 @@
+import React from "react";
+
 export function Footer() {
   return (
     <footer className="relative py-16 px-6 border-t border-border">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
+      <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
 
-      <div className="relative max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
-          {/* Logo/Brand */}
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[#14f195] flex items-center justify-center">
-                <div className="w-4 h-4 bg-background rounded-sm" />
-              </div>
-              <span className="text-xl font-bold">Mishti AI</span>
+        {/* Left: Brand */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <img src="/logo.svg" alt="Mishti AI" className="h-10 w-auto" />
             </div>
-            <p className="text-sm text-muted-foreground">Governed Intelligence Platform</p>
-          </div>
-
-          {/* Links */}
-          <div className="flex items-center gap-8 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-primary transition-colors">Documentation</a>
-            <a href="#" className="hover:text-primary transition-colors">Architecture</a>
-            <a href="#" className="hover:text-primary transition-colors">Privacy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms</a>
-          </div>
-
-          {/* Copyright */}
-          <div className="text-sm text-muted-foreground">
-            © 2026 Mishti AI. All rights reserved.
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Governed Intelligence Infrastructure
+          </p>
         </div>
 
-        {/* Bottom accent line */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        {/* Center: Links */}
+        <div className="flex gap-6 text-sm text-muted-foreground">
+          <a href="#architecture" className="hover:text-primary">Architecture</a>
+          <a href="#roadmap" className="hover:text-primary">Roadmap</a>
+          <a href="#access" className="hover:text-primary">Access</a>
+        </div>
+
+        {/* Right: Copyright */}
+        <div className="text-sm text-muted-foreground">
+          © 2026 Mishti AI. All rights reserved.
+        </div>
+
       </div>
     </footer>
   );
 }
+
+
