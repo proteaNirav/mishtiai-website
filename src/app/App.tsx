@@ -12,6 +12,7 @@ import { LES } from "./components/LES";
 import { Console } from "./components/Console";
 import { Roadmap } from "./components/Roadmap";
 import { WhoIsThisFor } from "./components/WhoIsThisFor";
+import { Credibility } from "./components/Credibility";
 import { Access } from "./components/Access";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -74,6 +75,7 @@ export default function App() {
         <Console />
         <Roadmap />
         <WhoIsThisFor />
+        <Credibility />
         <Access
           onRequestAccess={() => scrollToAccess()}
           onPartnerClick={() => setIsPartnerModalOpen(true)}
@@ -93,6 +95,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
