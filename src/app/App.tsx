@@ -15,6 +15,7 @@ import { WhoIsThisFor } from "./components/WhoIsThisFor";
 import { Credibility } from "./components/Credibility";
 import { Access } from "./components/Access";
 import { Footer } from "./components/Footer";
+import { PrivacyNotice } from "./components/PrivacyNotice";
 import { Header } from "./components/Header";
 
 export default function App() {
@@ -72,6 +73,7 @@ export default function App() {
         <WhoIsThisFor />
         <Credibility />
         <Access />
+        <PrivacyNotice />
         <Footer />
       </div>
     </div>
