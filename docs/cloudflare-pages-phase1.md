@@ -1,6 +1,6 @@
 # Cloudflare Pages Phase 1 — proposed hosting (do not apply)
 
-Status: **READY_FOR_ARCHITECT_REVIEW**. Isolated development branch only. **Do not deploy, change live DNS, reactivate/disable Vercel, merge, or spend money.**
+Status: **READY_FOR_ARCHITECT_REVIEW** after W1 catch-all removal. Isolated development branch only. **Do not deploy, change live DNS, reactivate/disable Vercel, merge, or spend money.**
 
 Reviewed locally on Protea-AI-Dev-01 with Ollama `qwen2.5-coder:14b`. No Grok/Codex/paid cloud was used for this work.
 
@@ -15,17 +15,21 @@ Reviewed locally on Protea-AI-Dev-01 with Ollama `qwen2.5-coder:14b`. No Grok/Co
 | Preview | `*.pages.dev` (keep `X-Robots-Tag: noindex` on `pages.dev`) | No |
 | Vercel | Leave existing project untouched | Do not change |
 
+Git-integrated Pages project creation can auto-publish `main` and public PR previews. Connecting the repo is **not authorized**. Do not copy this public-site config onto founder-private `console.mishtiai.in`.
+
 ## Site review (as found)
 
-- Vite 6 + React 18 Figma Make export. Scripts: `dev`, `build`. No lint or test toolchain.
+- Vite 6 + React 18 Figma Make export. Scripts: `dev`, `build`, `verify:pages`, `smoke:static`. No lint or test toolchain.
 - Single page. `react-router` is a dependency but unused. Navigation is `scrollIntoView` plus hash links (`#architecture`, `#roadmap`, `#access`).
 - Assets: `public/logo.svg`; Inter via Google Fonts CSS `@import`; no other CDN images.
-- Forms:
-  - Early-access form in `src/app/components/Access.tsx` POSTs from the browser to `https://formspree.io/f/mvzdjvlw`. Form ID is public by Formspree design. No repo secrets, no `VITE_*` env.
-  - `PartnerModal` only `console.log`s. `AccessModal` is unused (`isModalOpen` never set true) and also only logs.
-- Third parties at runtime: Google Fonts, Formspree. Fallback contact: `connect@mishtiai.in`.
-- `react` / `react-dom` were optional peerDependencies (Make default). They are now explicit `dependencies` so a clean Pages install can resolve them.
-- Repo currently tracks `node_modules` (~162k files) and a stale `dist` (missing `logo.svg`). Pages **must** publish `dist` only. Free plan deployed-file limit is 20,000. This PR does **not** untrack vendor/build trees.
+- `react` / `react-dom` are explicit `dependencies` so a clean Pages install can resolve them.
+- Repo currently tracks `node_modules` (~162k files) and a stale `dist`. Pages **must** publish `dist` only. Free plan deployed-file limit is 20,000. Vendor untrack is a **separate plan** (W2). This PR does **not** untrack those trees.
+
+## W1 routing (corrected)
+
+`public/_redirects` has **no rewrite rules**. The previous `/* /index.html 200` catch-all was removed because Cloudflare can apply `_redirects` even when `/assets/*.js`, `/assets/*.css`, or `/logo.svg` exist, and redirects run before `_headers`.
+
+Do not add a top-level `404.html`. Pages default SPA fallback (no `404.html`) remains available if client routes are added later. That edge behavior is **not proven** here. Vite preview is **not** Cloudflare edge proof. `pnpm smoke:static` uses a naive Node static server with no SPA rewrite: hashed JS/CSS/logo must be 200 with their own types; unknown paths must be 404, not HTML.
 
 ## Proposed Pages build settings (dashboard — do not create yet)
 
@@ -41,59 +45,62 @@ Reviewed locally on Protea-AI-Dev-01 with Ollama `qwen2.5-coder:14b`. No Grok/Co
 | Environment variables | none required |
 | Functions / Workers | none — static site only |
 
-## Deployment procedure (proposed, not executed)
+## W3 — forms, privacy, latent CTAs (document only; no rewrite)
 
-1. Architect reviews this PR. Owner approves merge. **Do not merge in Phase 1.**
-2. Owner creates a Cloudflare Pages project from `proteaNirav/mishtiai-website` on the Free plan, output `dist`.
-3. First production deploy stays on `*.pages.dev` until DNS is approved.
-4. Confirm preview: home, hash links, logo, early-access Formspree submit, security headers.
-5. Only after Architect + owner sign-off, add custom domain `www.mishtiai.in` in Pages → Custom domains (not by editing DNS first).
-6. Leave Vercel as-is until the Cloudflare hostname is verified and the owner chooses cutover.
+No personal data was submitted during this offline review.
 
-## DNS verification (proposed, not applied)
+### Live early-access form
 
-Cloudflare requires the Pages custom-domain flow **before** a manual CNAME, or the hostname returns 522.
+- Component: `src/app/components/Access.tsx`
+- Endpoint: browser POST to `https://formspree.io/f/mvzdjvlw` (public form id, not a secret)
+- Fields: `name`, `email`, `company`, `message`, hidden `_subject`
+- Error handling: non-OK or network failure sets `error` and shows “Please email connect@mishtiai.in.” Success resets the form and shows “Request received. We will review and respond shortly.”
+- On-page promise: “controlled access … within 24 hours” and “You receive a response within 24 hours.” Owner must confirm this SLA is operationally true before cutover. Success copy says “shortly,” which is weaker than 24 hours.
 
-Proposed records after Pages shows the target (example; use the actual `*.pages.dev` Cloudflare prints):
+### Formspree ownership / privacy / anti-spam / retention — owner confirmation required
 
-| Type | Name | Content | Purpose |
-| --- | --- | --- | --- |
-| CNAME | `www` | `<project>.pages.dev` | Serve the site at `www.mishtiai.in` |
-| Apex | `mishtiai.in` | **not changed in Phase 1** | Later: CNAME/ALIAS or redirect to `www` if the zone is on Cloudflare |
+This review cannot see the Formspree dashboard. Before public cutover, owner must confirm:
 
-Verification checklist (post-approval only):
+| Item | Offline finding | Owner must confirm |
+| --- | --- | --- |
+| Ownership | Form id is hardcoded; no token in repo | Account that owns `mvzdjvlw` is proteaNirav / Mishti AI |
+| Notification | Unknown | Inbox is `connect@mishtiai.in` or another authorized mailbox |
+| Anti-spam | No captcha or honeypot in this form | Formspree reCAPTCHA / AKISMET / domain allowlist enabled as needed |
+| Privacy disclosure | Site has no privacy notice near the form | Lawful-basis / vendor-processing text before public leads |
+| Retention | Unknown | How long Formspree and mailbox keep submissions |
+| Dummy submit | Not run (no personal data) | Separately authorized non-PII test after Formspree ownership is confirmed |
 
-- Pages dashboard shows the custom domain **Active**.
-- `https://www.mishtiai.in` serves this build (TLS issued by Cloudflare).
-- `https://www.mishtiai.in/#access` reaches the form.
-- Response includes `X-Frame-Options: DENY` and the committed CSP.
-- `*.pages.dev` remains `noindex`.
-- CAA records, if any, allow Let’s Encrypt / Google Trust / SSL.com as in Cloudflare Pages docs.
+Do not send real lead data from this workstream.
 
-Do **not** add HSTS until the hostname has been live and correct.
+### Latent Partner / Access modal CTAs — do not treat as live leads
 
-## Rollback (proposed, not applied)
+- `AccessModal` is mounted with `isModalOpen`, which is never set `true` in current `App.tsx`. Submit only `console.log`s PII. Not a live lead path.
+- `PartnerModal` is mounted; `App` passes `onPartnerClick={() => setIsPartnerModalOpen(true)}`, but current `Access` **ignores** that prop (`Access({}: AccessProps)`). No partner button in the live Access section. Submit only `console.log`s PII.
+- Backup files (`Access.backup-before-header.tsx`, `App.backup-before-header.tsx`) still show the older wired CTAs. Those files are not the live entry.
 
-1. **Pages:** Workers & Pages → project → Deployments → Retry / promote the last known-good production deployment. No DNS edit required.
-2. **Domain detach:** remove the Pages custom domain, then delete the `www` CNAME. Site becomes `*.pages.dev` only.
-3. **Vercel:** because Vercel is not disabled in this phase, rollback to the previous host is “leave DNS pointing where it already points.” Do not flip DNS in Phase 1.
-4. **Git:** revert this branch; `main` remains `67d2dc97` until Architect merge.
+Before publication (separate change, not this W1 fix): either implement those flows honestly (no console PII) or keep them unreachable / remove the dead mounts so they cannot be re-wired by accident. Do not silently rewrite them here.
 
 ## Security notes for Architect
 
-- Formspree form ID is client-visible. Rate limits / spam controls live in Formspree, not in this repo.
-- Partner and unused Access modal submissions are not sent anywhere.
-- CSP uses `style-src 'unsafe-inline'` because the Figma export uses inline styles. Tighten only after a design pass.
-- Default Pages header `Access-Control-Allow-Origin: *` remains unless Architect wants it detached.
-- No application secrets in the repo. Do not add Formspree tokens to Pages env unless a server Function is later approved (out of scope).
+- CSP `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com` is a **temporary** exception for the Figma inline-style export. Keep it documented. Do not claim it has been tightened.
+- HSTS is **not** enabled. Do not add it until live DNS is approved and correct.
+- Default Pages header `Access-Control-Allow-Origin: *` remains unless Architect wants it detached. Not tested on the Pages edge.
+- No application secrets in the repo.
+
+## Deployment / DNS / rollback (proposed, not executed)
+
+Unchanged from Phase 1: do not create a Pages project, do not add `www.mishtiai.in`, do not edit DNS, do not disable Vercel. Rollback remains “leave DNS where it is” until a later authorized cutover. Git revert target for this branch is the previous reviewed head until Architect accepts the W1 SHA.
 
 ## Local evidence commands
 
 ```text
 pnpm run build
 pnpm run verify:pages
+pnpm run smoke:static
 pnpm run lint    # not defined — expected
 pnpm test        # not defined — expected
 ```
+
+`verify:pages` and `smoke:static` are local static-output checks. They are **not** Cloudflare Pages edge verification.
 
 Cost of this phase: **₹0**.
