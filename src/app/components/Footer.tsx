@@ -20,6 +20,7 @@ export function Footer() {
           <a href="#architecture" className="hover:text-primary">Architecture</a>
           <a href="#roadmap" className="hover:text-primary">Roadmap</a>
           <a href="#access" className="hover:text-primary">Access</a>
+          <a href="#privacy" className="hover:text-primary">Privacy</a>
         </div>
 
         {/* Right: Copyright */}
