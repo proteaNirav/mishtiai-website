@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "verify:pages": "node scripts/verify-pages-dist.mjs",
     "smoke:static": "node scripts/smoke-static-dist.mjs",
-    "verify:leads": "node --test scripts/verify-lead-safety.test.mjs"
+    "verify:leads": "node --test scripts/verify-lead-safety.test.mjs",
+    "verify:source-hygiene": "node scripts/verify-source-hygiene.mjs"
   },
   "engines": {
     "node": ">=20 <25"
