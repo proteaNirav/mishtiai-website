@@ -8,7 +8,8 @@
     "dev": "vite",
     "preview": "vite preview",
     "verify:pages": "node scripts/verify-pages-dist.mjs",
-    "smoke:static": "node scripts/smoke-static-dist.mjs"
+    "smoke:static": "node scripts/smoke-static-dist.mjs",
+    "verify:leads": "node --test scripts/verify-lead-safety.test.mjs"
   },
   "engines": {
     "node": ">=20 <25"
