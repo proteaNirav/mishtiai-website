@@ -1,0 +1,18 @@
+# Local installs and build output (already tracked in this Figma export; do not
+# untrack in this Phase 1 PR without Architect approval — Pages free limit is
+# 20,000 deployed files, so the Pages output directory MUST stay `dist`).
+node_modules/
+dist/
+
+# Environment and local tooling
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+
+# Host dashboards — do not commit local link state
+.vercel
+.wrangler
+.cloudflare/

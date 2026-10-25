@@ -1,0 +1,5 @@
+# Cloudflare Pages SPA fallback.
+# This site is a single-page Vite app (in-page scroll / hash links, no React Router).
+# The 200 rewrite keeps unknown paths on the app shell for future client routes.
+# Do not add a top-level 404.html — that would disable Pages' default SPA behavior.
+/*    /index.html   200
