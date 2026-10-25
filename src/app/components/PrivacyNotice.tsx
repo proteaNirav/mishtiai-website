@@ -18,7 +18,7 @@ export function PrivacyNotice() {
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Website delivery</h3>
           <p>
-            Cloudflare provides our intended website hosting and security services, and may process
+            Cloudflare provides our website hosting and security services, and may process
             technical connection information such as IP addresses, device or browser metadata,
             requests and security events. This site can also load font resources from Google Fonts,
             which may receive connection metadata when your browser requests a font.

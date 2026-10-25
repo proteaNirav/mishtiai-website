@@ -20,7 +20,7 @@ export function Hero({ onRequestAccess }: HeroProps) {
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-lg border border-primary/20 bg-card/40 backdrop-blur-sm">
               <Activity className="w-4 h-4 text-primary" />
               <span className="text-sm text-foreground/80 font-mono">
-                SYSTEM STATUS: OPERATIONAL
+                PUBLIC WEBSITE: LIVE
               </span>
               <div className="w-2 h-2 rounded-full bg-[#14f195] animate-pulse" />
             </div>
@@ -58,10 +58,10 @@ export function Hero({ onRequestAccess }: HeroProps) {
                 onClick={onRequestAccess}
                 className="group px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold transition-all shadow-lg shadow-primary/25 hover:shadow-primary/50 hover:scale-[1.02] flex items-center justify-center gap-3"
               >
-                Get Controlled AI Access
+                View Access Status
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="px-8 py-4 bg-card/50 text-foreground rounded-lg font-semibold transition-all border border-border hover:border-primary/40 backdrop-blur-md hover:bg-card/80 flex items-center justify-center gap-3">
+              <button onClick={() => document.getElementById("architecture")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="px-8 py-4 bg-card/50 text-foreground rounded-lg font-semibold transition-all border border-border hover:border-primary/40 backdrop-blur-md hover:bg-card/80 flex items-center justify-center gap-3">
                 <Lock className="w-5 h-5" />
                 See How It Works
               </button>
