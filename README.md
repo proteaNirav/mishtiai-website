@@ -1,11 +1,33 @@
+# Mishti AI public website
 
-  # Website Content Development
+Figma Make export for the public marketing site. Original design: https://www.figma.com/design/4jXHWXqJhBD9lRMbn1Z7K1/Website-Content-Development.
 
-  This is a code bundle for Website Content Development. The original project is available at https://www.figma.com/design/4jXHWXqJhBD9lRMbn1Z7K1/Website-Content-Development.
+## Local
 
-  ## Running the code
+```text
+pnpm install
+pnpm dev
+```
 
-  Run `npm i` to install the dependencies.
+Clean isolated check (do not use leftover tracked `dist/`):
 
-  Run `npm run dev` to start the development server.
-  
+```text
+# PowerShell
+$env:PAGES_DIST=".pages-check-dist"
+pnpm run build
+pnpm run verify:pages
+pnpm run smoke:static
+```
+
+Use Node 22 (see `.node-version`). `pnpm lint` and `pnpm test` are not defined in this export. `verify:pages` rejects the stale Figma title `Website Content Development` and hashed assets that `index.html` does not reference. `smoke:static` is a naive local static-output check, not Cloudflare edge proof. Do not treat Vite preview as Pages behavior.
+
+## Cloudflare Pages (proposed — not applied)
+
+Phase 1 prep only. Do not deploy or change DNS from this branch.
+
+- Build command: `pnpm run build`
+- Output directory: `dist`
+- `public/_redirects` has no catch-all rewrite (hash/scroll site)
+- Security headers: `public/_headers` (no HSTS)
+- Hosting, DNS, form, and rollback notes: `docs/cloudflare-pages-phase1.md`
+ 

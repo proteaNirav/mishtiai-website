@@ -17,6 +17,11 @@ function figmaAssetResolver() {
 }
 
 export default defineConfig({
+  build: {
+    // Isolated checks set PAGES_DIST so they do not overwrite tracked leftover dist/.
+    outDir: process.env.PAGES_DIST?.trim() || "dist",
+    emptyOutDir: true,
+  },
   plugins: [
     figmaAssetResolver(),
     // The React and Tailwind plugins are both required for Make, even if
