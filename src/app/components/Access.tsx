@@ -1,11 +1,6 @@
 ﻿import React, { useState } from "react";
 
-interface AccessProps {
-  onRequestAccess?: () => void;
-  onPartnerClick?: () => void;
-}
-
-export function Access({}: AccessProps) {
+export function Access() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -47,7 +42,7 @@ export function Access({}: AccessProps) {
         </h2>
 
         <p className="text-muted-foreground mb-10">
-          We will review your use case and give you controlled access to Mishti AI within 24 hours.
+          Submit an early-access request for review. Access is not automatic, and no response deadline is guaranteed.
         </p>
 
         <div className="mb-10 text-left max-w-[700px] mx-auto">
@@ -55,7 +50,7 @@ export function Access({}: AccessProps) {
   <ul className="text-sm text-muted-foreground space-y-2">
     <li>• We review your use case and system requirements</li>
     <li>• We evaluate fit for governed AI execution</li>
-    <li>• You receive a response within 24 hours</li>
+    <li>• We may email you for more details if the request is suitable for the current pilot</li>
     <li>• Selected teams get guided onboarding access</li>
   </ul>
 </div>
@@ -92,6 +87,26 @@ export function Access({}: AccessProps) {
             required
             className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground"
           />
+
+          <div className="space-y-2 rounded-lg border border-border p-4 text-sm text-muted-foreground">
+            <label className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                name="formspree_processing_acknowledged"
+                value="yes"
+                required
+                className="mt-1"
+              />
+              <span>
+                I understand that this request, including my contact details and message,
+                is submitted to Formspree, a third-party form processor, for handling.
+              </span>
+            </label>
+            <p>
+              Please share only business information needed to evaluate your request.
+              Do not include passwords, secrets, health information, or confidential data.
+            </p>
+          </div>
 
           <button
             type="submit"
