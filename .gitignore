@@ -3,6 +3,7 @@
 # 20,000 deployed files, so the Pages output directory MUST stay `dist`).
 node_modules/
 dist/
+.pages-check-dist/
 
 # Environment and local tooling
 .env

@@ -1,13 +1,22 @@
-import { createReadStream, existsSync, readdirSync, statSync } from "node:fs";
+import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, resolve, sep } from "node:path";
+import {
+  EXPECTED_TITLE,
+  STALE_TITLE,
+  parseTitle,
+  referencedHashedAssets,
+  resolvePagesDist,
+} from "./pages-output.mjs";
 
-const dist = resolve("dist");
+const dist = resolve(resolvePagesDist());
 const failures = [];
 
 function fail(message) {
   failures.push(message);
 }
+
+console.log(`smoke:static output directory: ${dist}`);
 
 const types = {
   ".html": "text/html; charset=utf-8",
@@ -56,18 +65,36 @@ async function get(origin, path) {
   };
 }
 
-function hashedAsset(ext) {
-  const assets = readdirSync(join(dist, "assets"));
-  const name = assets.find((file) => new RegExp(`^index-[A-Za-z0-9_-]+\\.${ext}$`).test(file));
-  return name ? `/assets/${name}` : null;
+const indexPath = join(dist, "index.html");
+if (!existsSync(indexPath)) {
+  console.error(`Local static-output smoke failed: missing ${indexPath}`);
+  process.exit(1);
+}
+
+const html = readFileSync(indexPath, "utf8");
+const title = parseTitle(html);
+if (title.includes(STALE_TITLE) || title !== EXPECTED_TITLE) {
+  fail(`index.html title must be "${EXPECTED_TITLE}"; got "${title}"`);
+}
+const { js: jsRefs, css: cssRefs } = referencedHashedAssets(html);
+if (jsRefs.length !== 1 || cssRefs.length !== 1) {
+  fail(`index.html must reference exactly one hashed JS and one hashed CSS; js=${jsRefs.join(",")} css=${cssRefs.join(",")}`);
 }
 
 const { server, origin } = await startServer();
 
 try {
   const home = await get(origin, "/index.html");
-  if (home.status !== 200 || !home.type.includes("text/html") || !home.body.includes("Mishti AI")) {
-    fail(`GET /index.html expected HTML 200, got ${home.status} ${home.type}`);
+  const homeTitle = parseTitle(home.body);
+  if (
+    home.status !== 200 ||
+    !home.type.includes("text/html") ||
+    homeTitle !== EXPECTED_TITLE ||
+    homeTitle.includes(STALE_TITLE)
+  ) {
+    fail(
+      `GET /index.html expected current title HTML 200, got ${home.status} ${home.type} title="${homeTitle}"`,
+    );
   }
 
   const logo = await get(origin, "/logo.svg");
@@ -75,15 +102,13 @@ try {
     fail(`GET /logo.svg expected SVG 200, got ${logo.status} ${logo.type}`);
   }
 
-  const jsPath = hashedAsset("js");
-  const cssPath = hashedAsset("css");
-  if (!jsPath || !cssPath) {
-    fail("hashed JS/CSS paths missing from dist/assets");
-  } else {
+  for (const jsPath of jsRefs) {
     const js = await get(origin, jsPath);
     if (js.status !== 200 || !js.type.includes("javascript") || js.body.includes("<!DOCTYPE html>")) {
       fail(`GET ${jsPath} expected JS 200, got ${js.status} ${js.type}`);
     }
+  }
+  for (const cssPath of cssRefs) {
     const css = await get(origin, cssPath);
     if (css.status !== 200 || !css.type.includes("text/css") || css.body.includes("<!DOCTYPE html>")) {
       fail(`GET ${cssPath} expected CSS 200, got ${css.status} ${css.type}`);
@@ -109,6 +134,6 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`Local static-output smoke passed at ${origin}.`);
+console.log(`Local static-output smoke passed at ${origin} for ${dist}.`);
 console.log("Naive static server, no SPA fallback. This is not Cloudflare edge proof.");
 console.log("Vite preview was not used for this smoke.");

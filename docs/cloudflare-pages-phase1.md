@@ -93,7 +93,11 @@ Unchanged from Phase 1: do not create a Pages project, do not add `www.mishtiai.
 
 ## Local evidence commands
 
+Do **not** smoke or verify leftover tracked `dist/` (it still has the stale Figma title `Website Content Development`). Set `PAGES_DIST` so `build`, `verify:pages`, and `smoke:static` share one fresh empty output:
+
 ```text
+# PowerShell — isolated clean output
+$env:PAGES_DIST=".pages-check-dist"
 pnpm run build
 pnpm run verify:pages
 pnpm run smoke:static
@@ -101,6 +105,6 @@ pnpm run lint    # not defined — expected
 pnpm test        # not defined — expected
 ```
 
-`verify:pages` and `smoke:static` are local static-output checks. They are **not** Cloudflare Pages edge verification.
+`verify:pages` rejects the stale title, missing referenced hashes, and leftover unreferenced `index-*.js` / `index-*.css`. `smoke:static` requests the hashes parsed from that same `index.html`. These are local static-output checks. They are **not** Cloudflare Pages edge verification. Tracked `dist/` is not reset or untracked (W2).
 
 Cost of this phase: **₹0**.

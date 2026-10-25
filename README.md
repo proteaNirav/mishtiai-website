@@ -7,12 +7,19 @@ Figma Make export for the public marketing site. Original design: https://www.fi
 ```text
 pnpm install
 pnpm dev
-pnpm build
-pnpm verify:pages
-pnpm smoke:static
 ```
 
-Use Node 22 (see `.node-version`). `pnpm lint` and `pnpm test` are not defined in this export. `pnpm smoke:static` is a naive local static-output check, not Cloudflare edge proof. Do not treat Vite preview as Pages behavior.
+Clean isolated check (do not use leftover tracked `dist/`):
+
+```text
+# PowerShell
+$env:PAGES_DIST=".pages-check-dist"
+pnpm run build
+pnpm run verify:pages
+pnpm run smoke:static
+```
+
+Use Node 22 (see `.node-version`). `pnpm lint` and `pnpm test` are not defined in this export. `verify:pages` rejects the stale Figma title `Website Content Development` and hashed assets that `index.html` does not reference. `smoke:static` is a naive local static-output check, not Cloudflare edge proof. Do not treat Vite preview as Pages behavior.
 
 ## Cloudflare Pages (proposed — not applied)
 

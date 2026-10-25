@@ -1,7 +1,14 @@
 import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { basename, join } from "node:path";
+import {
+  EXPECTED_TITLE,
+  STALE_TITLE,
+  parseTitle,
+  referencedHashedAssets,
+  resolvePagesDist,
+} from "./pages-output.mjs";
 
-const dist = "dist";
+const dist = resolvePagesDist();
 const failures = [];
 
 function fail(message) {
@@ -12,6 +19,8 @@ function read(path) {
   return readFileSync(path, "utf8");
 }
 
+console.log(`verify:pages output directory: ${dist}`);
+
 for (const file of ["index.html", "_headers", "logo.svg"]) {
   if (!existsSync(join(dist, file))) {
     fail(`missing ${join(dist, file)}`);
@@ -19,19 +28,41 @@ for (const file of ["index.html", "_headers", "logo.svg"]) {
 }
 
 const indexPath = join(dist, "index.html");
+let jsRefs = [];
+let cssRefs = [];
+
 if (existsSync(indexPath)) {
   const html = read(indexPath);
   if (!html.includes("<!DOCTYPE html>") && !html.includes("<html")) {
-    fail("dist/index.html is not HTML");
+    fail(`${indexPath} is not HTML`);
   }
   if (!html.includes('id="root"')) {
-    fail("dist/index.html missing #root");
+    fail(`${indexPath} missing #root`);
   }
-  if (!html.includes("/assets/") || !html.includes(".js")) {
-    fail("dist/index.html does not reference a hashed JS bundle");
+
+  const title = parseTitle(html);
+  if (title.includes(STALE_TITLE)) {
+    fail(`${indexPath} has stale title "${title}"`);
   }
-  if (!html.includes(".css")) {
-    fail("dist/index.html does not reference a hashed CSS bundle");
+  if (title !== EXPECTED_TITLE) {
+    fail(`${indexPath} title must be "${EXPECTED_TITLE}"; got "${title}"`);
+  }
+
+  ({ js: jsRefs, css: cssRefs } = referencedHashedAssets(html));
+  if (jsRefs.length !== 1) {
+    fail(`${indexPath} must reference exactly one hashed JS bundle; found ${jsRefs.join(", ") || "none"}`);
+  }
+  if (cssRefs.length !== 1) {
+    fail(`${indexPath} must reference exactly one hashed CSS bundle; found ${cssRefs.join(", ") || "none"}`);
+  }
+
+  for (const ref of [...jsRefs, ...cssRefs]) {
+    const file = join(dist, ref.replace(/^\/+/, ""));
+    if (!existsSync(file)) {
+      fail(`${indexPath} references missing ${ref}`);
+    } else if (statSync(file).size < 1024) {
+      fail(`${ref} is too small to be a real bundle (${statSync(file).size} bytes)`);
+    }
   }
 }
 
@@ -39,7 +70,7 @@ const logoPath = join(dist, "logo.svg");
 if (existsSync(logoPath)) {
   const logo = read(logoPath);
   if (!logo.includes("<svg") || statSync(logoPath).size < 32) {
-    fail("dist/logo.svg is not a usable SVG");
+    fail(`${logoPath} is not a usable SVG`);
   }
 }
 
@@ -50,10 +81,10 @@ if (existsSync(redirectsPath)) {
     .map((line) => line.trim())
     .filter((line) => line && !line.startsWith("#"));
   if (rules.length > 0) {
-    fail(`dist/_redirects must have no rewrite rules; found: ${rules.join(" | ")}`);
+    fail(`${redirectsPath} must have no rewrite rules; found: ${rules.join(" | ")}`);
   }
   if (rules.some((line) => /\/\*\s+\/index\.html\s+200/.test(line))) {
-    fail("dist/_redirects still contains the forbidden /* /index.html 200 catch-all");
+    fail(`${redirectsPath} still contains the forbidden /* /index.html 200 catch-all`);
   }
 }
 
@@ -71,32 +102,26 @@ if (existsSync(headersPath)) {
   ];
   for (const [token, label] of required) {
     if (!headers.includes(token)) {
-      fail(`dist/_headers missing ${label}`);
+      fail(`${headersPath} missing ${label}`);
     }
   }
   if (/strict-transport-security/i.test(headers)) {
-    fail("dist/_headers must not enable HSTS in this phase");
+    fail(`${headersPath} must not enable HSTS in this phase`);
   }
 }
 
 const assetsDir = join(dist, "assets");
 if (!existsSync(assetsDir)) {
-  fail("missing dist/assets");
+  fail(`missing ${assetsDir}`);
 } else {
   const assets = readdirSync(assetsDir);
-  const js = assets.filter((name) => /^index-[A-Za-z0-9_-]+\.js$/.test(name));
-  const css = assets.filter((name) => /^index-[A-Za-z0-9_-]+\.css$/.test(name));
-  if (js.length === 0) {
-    fail("dist/assets has no hashed JS bundle");
-  }
-  if (css.length === 0) {
-    fail("dist/assets has no hashed CSS bundle");
-  }
-  for (const name of [...js, ...css]) {
-    const size = statSync(join(assetsDir, name)).size;
-    if (size < 1024) {
-      fail(`${name} is too small to be a real bundle (${size} bytes)`);
-    }
+  const hashed = assets.filter((name) => /^index-[A-Za-z0-9_-]+\.(js|css)$/.test(name));
+  const referencedNames = new Set(
+    [...jsRefs, ...cssRefs].map((ref) => basename(ref)),
+  );
+  const leftovers = hashed.filter((name) => !referencedNames.has(name));
+  if (leftovers.length > 0) {
+    fail(`stale hashed assets not referenced by index.html: ${leftovers.join(", ")}`);
   }
 }
 
@@ -115,9 +140,9 @@ function countFiles(dir) {
 
 const fileCount = existsSync(dist) ? countFiles(dist) : 0;
 if (fileCount === 0) {
-  fail("dist is empty");
+  fail(`${dist} is empty`);
 } else if (fileCount >= 20000) {
-  fail(`dist has ${fileCount} files; Cloudflare Pages free limit is 20000`);
+  fail(`${dist} has ${fileCount} files; Cloudflare Pages free limit is 20000`);
 }
 
 if (failures.length > 0) {
@@ -128,5 +153,6 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`Cloudflare Pages dist verification passed (${fileCount} files).`);
-console.log("Catch-all rewrite absent. Local checks are not Cloudflare edge proof.");
+console.log(`Cloudflare Pages dist verification passed (${fileCount} files in ${dist}).`);
+console.log("Catch-all rewrite absent. Title and hashed asset refs match this output.");
+console.log("Local checks are not Cloudflare edge proof.");
