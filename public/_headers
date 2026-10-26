@@ -1,6 +1,6 @@
 # Security headers for the static marketing site.
-# HSTS is intentionally omitted until Architect approves live DNS on Cloudflare.
-# CSP allows existing inline styles (Figma export), Google Fonts, and Formspree POST.
+# HSTS remains deferred pending a dedicated site-wide policy review.
+# CSP permits Figma inline styles and Google Fonts; external form submissions remain blocked.
 
 /*
   X-Frame-Options: DENY
