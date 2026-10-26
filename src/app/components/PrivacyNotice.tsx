@@ -8,7 +8,7 @@ export function PrivacyNotice() {
         <div>
           <p className="text-primary uppercase tracking-[0.25em] mb-2">Privacy and transparency</p>
           <h2 id="privacy-title" className="text-2xl md:text-3xl font-bold text-foreground">Website privacy information</h2>
-          <p className="mt-2">Last updated 25 October 2026</p>
+          <p className="mt-2">Last updated 26 October 2026</p>
         </div>
         <p>
           This is the public Mishti AI informational website, separate from the private Founder Console.
@@ -18,9 +18,10 @@ export function PrivacyNotice() {
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Website delivery</h3>
           <p>
-            Cloudflare provides our website hosting and security services, and may process
-            technical connection information such as IP addresses, device or browser metadata,
-            requests and security events. This site can also load font resources from Google Fonts,
+            Cloudflare provides primary website hosting, while this standby website is hosted by
+            Netlify. The hosting provider serving your visit may process technical connection
+            information such as IP addresses, device or browser metadata, requests and security
+            events. This site can also load font resources from Google Fonts,
             which may receive connection metadata when your browser requests a font.
           </p>
         </div>
