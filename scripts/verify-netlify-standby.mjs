@@ -1,0 +1,18 @@
+import assert from "node:assert/strict";
+import { readFileSync, readdirSync } from "node:fs";
+import { join, resolve } from "node:path";
+const root=resolve(process.env.PAGES_DIST || "dist");
+const headers=readFileSync(join(root,"_headers"),"utf8");
+assert.match(headers,/\/\*\s*\n\s*X-Robots-Tag:\s*noindex/i,"standby globally noindex");
+assert.match(headers,/form-action .self./,"block external form actions");
+assert.doesNotMatch(headers,/formspree|pages\.dev/i);
+const html=readFileSync(join(root,"index.html"),"utf8");
+const jsRef=html.match(/\/assets\/index-[\w-]+\.js/)?.[0];
+assert.ok(jsRef,"JS reference missing");
+const js=readFileSync(join(root,jsRef.slice(1)),"utf8");
+assert.ok(js.includes("standby website is hosted by"),"standby disclosure missing");
+assert.ok(js.includes("Netlify"),"Netlify provider missing");
+assert.ok(js.includes("Early-access applications are temporarily closed"),"intake opened");
+assert.ok(!js.includes("mvzdjvlw"),"Formspree form endpoint present");
+assert.equal(readdirSync(join(root,"assets")).filter(x=>x.endsWith(".js")).length,1);
+console.log("Netlify standby PASS: no lead intake, noindex and provider disclosure");
