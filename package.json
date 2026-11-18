@@ -10,7 +10,8 @@
     "verify:pages": "node scripts/verify-pages-dist.mjs",
     "smoke:static": "node scripts/smoke-static-dist.mjs",
     "verify:leads": "node --test scripts/verify-lead-safety.test.mjs",
-    "verify:source-hygiene": "node scripts/verify-source-hygiene.mjs"
+    "verify:source-hygiene": "node scripts/verify-source-hygiene.mjs",
+    "verify:privacy": "node --test scripts/verify-privacy-notice.test.mjs"
   },
   "engines": {
     "node": ">=20 <25"

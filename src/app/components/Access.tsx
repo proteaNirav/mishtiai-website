@@ -105,6 +105,7 @@ export function Access() {
             <p>
               Please share only business information needed to evaluate your request.
               Do not include passwords, secrets, health information, or confidential data.
+              {" "}Read our <a className="underline text-primary" href="#privacy">privacy notice</a> before submitting.
             </p>
           </div>
 
