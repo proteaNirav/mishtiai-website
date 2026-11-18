@@ -1,0 +1,7 @@
+# No rewrite rules on purpose.
+# Navigation is in-page scroll / hash only. There is no client router.
+# Do not add `/* /index.html 200`: Cloudflare can apply _redirects even when
+# /assets/*.js, /assets/*.css, or /logo.svg exist, and redirects run before
+# _headers. Vite preview is not Cloudflare edge proof.
+# Do not add a top-level 404.html. Pages default SPA fallback (no 404.html)
+# remains available later if client routes are added. Not proven on Pages edge.
