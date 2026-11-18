@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+﻿import React from "react";
 import { Hero } from "./components/Hero";
 import { SystemGuarantees } from "./components/SystemGuarantees";
 import { Problem } from "./components/Problem";
@@ -16,13 +16,8 @@ import { Credibility } from "./components/Credibility";
 import { Access } from "./components/Access";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
-import { AccessModal } from "./components/AccessModal";
-import { PartnerModal } from "./components/PartnerModal";
 
 export default function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isPartnerModalOpen, setIsPartnerModalOpen] = useState(false);
-
   const scrollToAccess = () => {
     document.getElementById("access")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -76,21 +71,8 @@ export default function App() {
         <Roadmap />
         <WhoIsThisFor />
         <Credibility />
-        <Access
-          onRequestAccess={() => scrollToAccess()}
-          onPartnerClick={() => setIsPartnerModalOpen(true)}
-        />
+        <Access />
         <Footer />
-
-        {/* Modals */}
-        <AccessModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
-        <PartnerModal
-          isOpen={isPartnerModalOpen}
-          onClose={() => setIsPartnerModalOpen(false)}
-        />
       </div>
     </div>
   );
