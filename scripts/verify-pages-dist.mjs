@@ -97,13 +97,17 @@ if (existsSync(headersPath)) {
     ["Content-Security-Policy:", "Content-Security-Policy"],
     ["script-src 'self'", "CSP script-src 'self'"],
     ["style-src 'self' 'unsafe-inline'", "CSP style-src unsafe-inline exception"],
-    ["formspree.io", "Formspree connect/form-action"],
+    ["connect-src 'self'", "CSP no remote script/connection"],
+    ["form-action 'self'", "CSP no external form target"],
     ["fonts.googleapis.com", "Google Fonts style-src"],
   ];
   for (const [token, label] of required) {
     if (!headers.includes(token)) {
       fail(`${headersPath} missing ${label}`);
     }
+  }
+  if (/formspree\.io/i.test(headers)) {
+    fail("public info-only site CSP must not allow Formspree submissions");
   }
   if (/strict-transport-security/i.test(headers)) {
     fail(`${headersPath} must not enable HSTS in this phase`);
