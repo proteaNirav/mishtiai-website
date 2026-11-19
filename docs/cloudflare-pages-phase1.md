@@ -1,6 +1,6 @@
 # Cloudflare Pages Phase 1 — proposed hosting (do not apply)
 
-Status: **READY_FOR_ARCHITECT_REVIEW** after W1 catch-all removal. Isolated development branch only. **Do not deploy, change live DNS, reactivate/disable Vercel, merge, or spend money.**
+Status: **historical W1 note**. Live public Pages later shipped from a separate release. Same-origin intake (Worker + Turnstile, no Formspree) is documented in `docs/website-same-origin-intake.md` and is **not live** until the owner deploys it. **Do not recreate Pages or recut DNS from this file.**
 
 Reviewed locally on Protea-AI-Dev-01 with Ollama `qwen2.5-coder:14b`. No Grok/Codex/paid cloud was used for this work.
 
