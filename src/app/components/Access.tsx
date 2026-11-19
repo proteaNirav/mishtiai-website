@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 const INTAKE_PATH = "/api/early-access";
 const TURNSTILE_SCRIPT =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+/** Public Turnstile site key for widget “Mishti AI Early Access”. Not a secret. */
+const PUBLIC_TURNSTILE_SITE_KEY = "0x4AAAAAAGISoDHLJ7QQJxlG";
 const PRIVACY_MAIL = "niraventp@gmail.com";
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -78,12 +80,14 @@ export function Access() {
         const data = (await response.json()) as IntakeConfig;
         if (!cancelled) {
           setConfig({
-            enabled: Boolean(data.enabled && data.siteKey),
-            siteKey: data.siteKey || "",
+            enabled: Boolean(data.enabled),
+            siteKey: PUBLIC_TURNSTILE_SITE_KEY,
           });
         }
       } catch {
-        if (!cancelled) setConfig({ enabled: false, siteKey: "" });
+        if (!cancelled) {
+          setConfig({ enabled: false, siteKey: PUBLIC_TURNSTILE_SITE_KEY });
+        }
       }
     }
     loadConfig();
@@ -101,7 +105,7 @@ export function Access() {
         await loadTurnstile();
         if (removed || !widgetHost.current || !window.turnstile) return;
         widgetId.current = window.turnstile.render(widgetHost.current, {
-          sitekey: config.siteKey,
+          sitekey: PUBLIC_TURNSTILE_SITE_KEY,
           theme: "dark",
           callback: (value) => setToken(value),
           "expired-callback": () => setToken(""),

@@ -21,8 +21,6 @@ function readBody(req) {
 export function createLocalIntakeEnv() {
   return {
     INTAKE: createMemoryKv(),
-    TURNSTILE_SITE_KEY:
-      process.env.TURNSTILE_SITE_KEY?.trim() || "1x00000000000000000000AA",
     TURNSTILE_SECRET_KEY:
       process.env.TURNSTILE_SECRET_KEY?.trim() ||
       "1x0000000000000000000000000000000AA",

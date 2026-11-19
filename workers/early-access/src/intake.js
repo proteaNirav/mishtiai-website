@@ -6,6 +6,8 @@
 
 export const INTAKE_PATH = "/api/early-access";
 export const INTAKE_HEADER = "x-mishti-intake";
+/** Public Turnstile site key (frontend also bakes this). Not a secret. */
+export const PUBLIC_TURNSTILE_SITE_KEY = "0x4AAAAAAGISoDHLJ7QQJxlG";
 
 const PRODUCTION_ORIGINS = new Set([
   "https://mishtiai.in",
@@ -147,13 +149,12 @@ function clientIp(request) {
 }
 
 function configPayload(env) {
-  const siteKey = String(env.TURNSTILE_SITE_KEY || "").trim();
   const secret = String(env.TURNSTILE_SECRET_KEY || "").trim();
   const store = env.INTAKE;
-  const enabled = Boolean(siteKey && secret && store);
+  const enabled = Boolean(secret && store);
   return {
     enabled,
-    siteKey: enabled ? siteKey : "",
+    siteKey: PUBLIC_TURNSTILE_SITE_KEY,
     path: INTAKE_PATH,
   };
 }

@@ -9,7 +9,7 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` also serves same-origin `/api/early-access` from an in-memory mock of the intake Worker (dummy Turnstile keys). That mock is not Cloudflare edge proof.
+`pnpm dev` also serves same-origin `/api/early-access` from an in-memory mock of the intake Worker. The public Turnstile site key is baked in the frontend. That mock is not Cloudflare edge proof.
 
 Clean isolated check (do not use leftover tracked `dist/`):
 
