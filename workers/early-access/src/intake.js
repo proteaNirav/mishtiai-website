@@ -204,33 +204,29 @@ async function persist(env, record) {
 }
 
 async function maybeEmail(env, record) {
-  if (!env.INTAKE_EMAIL) return { emailed: false };
-  const from = String(env.INTAKE_FROM || "intake@mishtiai.in").trim();
   const to = String(env.INTAKE_NOTIFY_TO || "").trim();
-  if (!to) return { emailed: false };
+  if (!env.RESEND_API_KEY || !to) return;
+
   try {
-    const { EmailMessage } = await import("cloudflare:email");
-    const subject = "New Mishti AI access request";
-    const raw = [
-      `From: ${from}`,
-      `To: ${to}`,
-      `Subject: ${subject}`,
-      "MIME-Version: 1.0",
-      "Content-Type: text/plain; charset=utf-8",
-      "",
-      `Received: ${record.receivedAt}`,
-      `Name: ${record.name}`,
-      `Email: ${record.email}`,
-      `Company: ${record.company || "(none)"}`,
-      "",
-      record.message,
-      "",
-      "Stored append-only in Cloudflare KV. Do not reply from this message if the mailbox is unattended.",
-    ].join("\r\n");
-    await env.INTAKE_EMAIL.send(new EmailMessage(from, to, raw));
-    return { emailed: true };
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+        "Idempotency-Key": `mishti-intake/${record.id}`,
+      },
+      body: JSON.stringify({
+        from: "Mishti AI Intake <intake@notify.mishtiai.in>",
+        to: [to],
+        subject: "New Mishti AI website enquiry",
+        text: `A new enquiry was saved in Cloudflare KV.\nReceived: ${record.receivedAt}\nReference: ${record.id}`,
+      }),
+      signal: AbortSignal.timeout(4000),
+    });
+
+    if (!response.ok) console.warn("Intake notification rejected", response.status);
   } catch {
-    return { emailed: false };
+    console.warn("Intake notification unavailable");
   }
 }
 

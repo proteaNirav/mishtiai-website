@@ -20,8 +20,4 @@ id = "cacb354f6cb04f8ea509f8899e45449b"
 
 # Public Turnstile site key is baked in the frontend (0x4AAAAAAGISoDHLJ7QQJxlG).
 # Owner: `wrangler secret put TURNSTILE_SECRET_KEY` only. Never commit the secret.
-# Optional Email Routing (only if the zone already has Email Routing):
-#   [[send_email]]
-#   name = "INTAKE_EMAIL"
-#   destination_address = "niraventp@gmail.com"
-# and vars INTAKE_FROM / INTAKE_NOTIFY_TO.
+# Optional Resend notifications use RESEND_API_KEY and INTAKE_NOTIFY_TO Worker secrets.
