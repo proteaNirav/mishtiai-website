@@ -9,7 +9,6 @@ import {
 function env(overrides = {}) {
   return {
     INTAKE: createMemoryKv(),
-    TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
     TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA",
     ALLOW_DEV_BYPASS: "1",
     ...overrides,
@@ -54,7 +53,7 @@ test("GET returns public site key when configured", async () => {
   assert.equal(status, 200);
   assert.equal(body.ok, true);
   assert.equal(body.enabled, true);
-  assert.equal(body.siteKey, "1x00000000000000000000AA");
+  assert.equal(body.siteKey, "0x4AAAAAAGISoDHLJ7QQJxlG");
   assert.equal(body.path, INTAKE_PATH);
 });
 
@@ -64,7 +63,7 @@ test("GET reports disabled when Turnstile secret is missing", async () => {
   );
   assert.equal(status, 200);
   assert.equal(body.enabled, false);
-  assert.equal(body.siteKey, "");
+  assert.equal(body.siteKey, "0x4AAAAAAGISoDHLJ7QQJxlG");
 });
 
 test("POST stores a valid local request in KV", async () => {

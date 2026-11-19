@@ -1,5 +1,5 @@
-# Local `wrangler dev` only. Copy to .dev.vars (gitignored via .wrangler / .env rules).
-# These are Cloudflare's published dummy Turnstile keys, not production secrets.
-TURNSTILE_SITE_KEY=1x00000000000000000000AA
+# Local `wrangler dev` only. Copy to .dev.vars (gitignored).
+# Public widget site key is baked in Access.tsx (0x4AAAAAAGISoDHLJ7QQJxlG).
+# Dummy secret below is Cloudflare's published always-pass test value, not production.
 TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
 ALLOW_DEV_BYPASS=1

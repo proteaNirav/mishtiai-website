@@ -5,11 +5,11 @@ const js = readdirSync(join(dist, "assets")).filter(f=>/^index-[A-Za-z0-9_-]+\.j
 if(js.length!==1) throw new Error("Require exactly one built JS bundle");
 const bundle = readFileSync(join(dist,"assets",js[0]), "utf8");
 const access = readFileSync(new URL("../src/app/components/Access.tsx",import.meta.url),"utf8");
-const banned = ["mvzdjvlw", "formspree.io/f/", "POST /employees", "wrangler.p4b"];
+const banned = ["mvzdjvlw", "formspree.io/f/", "POST /employees", "wrangler.p4b", "1x00000000000000000000AA"];
 for(const marker of banned) {
  if(bundle.includes(marker)||access.includes(marker)) throw new Error("Unexpected private/form marker in public release: "+marker);
 }
-const required = ["/api/early-access", "challenges.cloudflare.com"];
+const required = ["/api/early-access", "challenges.cloudflare.com", "0x4AAAAAAGISoDHLJ7QQJxlG"];
 for(const marker of required) {
  if(!bundle.includes(marker) || !access.includes(marker)) {
   throw new Error("Same-origin intake marker missing from public release: "+marker);

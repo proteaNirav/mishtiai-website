@@ -1,6 +1,6 @@
 # Same-origin early-access intake (Cloudflare Worker + Turnstile)
 
-Status: **source ready, not live**. Draft PR only. Do not merge, deploy, or recut DNS until the owner says so.
+Status: **merged to `main` (`3b79c758`); public Turnstile site key follow-up on a later PR**. Live Pages/Worker still not deployed. Do not recut DNS.
 
 Replaces Formspree `mvzdjvlw`. Live CSP is `form-action 'self'` / `connect-src 'self'` plus Turnstile hosts after this change. No third-party form host.
 
@@ -38,11 +38,7 @@ Pages Functions are not used because the live site is a static Direct Upload of 
 
 Do not paste secret values into GitHub, chat, or this repo.
 
-1. **Turnstile** (Cloudflare Dashboard → Turnstile → Add widget)
-   - Hostnames: `mishtiai.in`, `www.mishtiai.in`
-   - Widget mode: managed
-   - Copy the **site key** (public) and **secret key** (secret)
-   - Dummy keys in `.dev.vars.example` are Cloudflare’s published always-pass test keys. Do not use them on production.
+1. **Turnstile** — widget “Mishti AI Early Access” exists (managed, hostnames `mishtiai.in` / `www.mishtiai.in`, pre-clearance off). Public site key `0x4AAAAAAGISoDHLJ7QQJxlG` is baked in `Access.tsx`. Owner keeps the **secret** in the Cloudflare dashboard and sets it as a Worker secret (do not paste it into git or chat). Dummy always-pass keys are local-only.
 
 2. **KV**
    ```text
@@ -50,21 +46,20 @@ Do not paste secret values into GitHub, chat, or this repo.
    ```
    Put the returned id into `workers/early-access/wrangler.toml` (replace the zero placeholder) **or** bind `INTAKE` in the Worker dashboard. Do not publish Access AUD or D1 UUIDs.
 
-3. **Worker secrets / vars**
+3. **Worker secret**
    ```text
-   wrangler secret put TURNSTILE_SITE_KEY
    wrangler secret put TURNSTILE_SECRET_KEY
    ```
-   Leave `ALLOW_DEV_BYPASS` unset in production.
+   Leave `ALLOW_DEV_BYPASS` unset in production. Do not put dummy site/secret keys on production.
 
-4. **Deploy Worker** (only after merge is authorized)
+4. **Deploy Worker**
    ```text
    cd workers/early-access
    wrangler deploy
    ```
-   Then add the two routes above on the existing `mishtiai.in` zone. Set `workers_dev = false` stays: no extra `workers.dev` hostname.
+   Then add the two routes above on the existing `mishtiai.in` zone. `workers_dev = false` stays: no extra `workers.dev` hostname.
 
-5. **Rebuild and re-upload Pages `dist/`** of the merged (or owner-approved) website SHA to the **existing** Pages project. Direct Upload of static files still does not include the Worker; the route handles `/api/early-access`.
+5. **Rebuild and re-upload Pages `dist/`** of the SHA that contains the public site key to the **existing** Pages project. Direct Upload of static files still does not include the Worker; the route handles `/api/early-access`.
 
 6. **Optional email copy**
    Enable Email Routing on `mishtiai.in`, verify `niraventp@gmail.com` (or another owner mailbox), add a `send_email` binding as commented in `wrangler.toml`, set `INTAKE_FROM` / `INTAKE_NOTIFY_TO`. If this is skipped, read submissions from KV (`intake:` prefix) in the dashboard.
@@ -86,7 +81,7 @@ PAGES_DIST=.pages-check-dist pnpm run smoke:static
 pnpm dev
 ```
 
-Vite serves `/api/early-access` from the same handler with in-memory KV and Cloudflare dummy Turnstile keys. This is not Cloudflare edge proof. Production Turnstile keys are still required from the owner.
+Vite serves `/api/early-access` from the same handler with in-memory KV. The frontend widget uses the public production site key. Local POST may use `dev-local` on localhost only. This is not Cloudflare edge proof.
 
 ## Guards kept
 

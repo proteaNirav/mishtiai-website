@@ -19,9 +19,8 @@ workers_dev = false
 binding = "INTAKE"
 id = "00000000000000000000000000000000"
 
-# Secrets / vars (dashboard or `wrangler secret put`, never commit real secrets):
-#   TURNSTILE_SITE_KEY
-#   TURNSTILE_SECRET_KEY
+# Public Turnstile site key is baked in the frontend (0x4AAAAAAGISoDHLJ7QQJxlG).
+# Owner: `wrangler secret put TURNSTILE_SECRET_KEY` only. Never commit the secret.
 # Optional Email Routing (only if the zone already has Email Routing):
 #   [[send_email]]
 #   name = "INTAKE_EMAIL"
