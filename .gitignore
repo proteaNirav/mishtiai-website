@@ -9,6 +9,8 @@ dist/
 .env
 .env.*
 !.env.example
+.dev.vars
+workers/early-access/.dev.vars
 *.log
 .DS_Store
 Thumbs.db

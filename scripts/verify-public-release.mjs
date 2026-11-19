@@ -9,5 +9,13 @@ const banned = ["mvzdjvlw", "formspree.io/f/", "POST /employees", "wrangler.p4b"
 for(const marker of banned) {
  if(bundle.includes(marker)||access.includes(marker)) throw new Error("Unexpected private/form marker in public release: "+marker);
 }
-if(!bundle.includes("Early-access applications are temporarily closed"))throw new Error("Public page closed-intake text missing");
-console.log("Public info-only release guard PASS: no live lead submission and no private-console marker");
+const required = ["/api/early-access", "challenges.cloudflare.com"];
+for(const marker of required) {
+ if(!bundle.includes(marker) || !access.includes(marker)) {
+  throw new Error("Same-origin intake marker missing from public release: "+marker);
+ }
+}
+if(bundle.includes("Early-access applications are temporarily closed")) {
+ throw new Error("Closed-intake copy must not ship while same-origin intake is enabled");
+}
+console.log("Public release guard PASS: same-origin intake present, Formspree and private-console markers absent");

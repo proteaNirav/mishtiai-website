@@ -1,0 +1,29 @@
+# Same-origin early-access intake Worker for mishtiai.in.
+# Free-tier Worker + KV. Do not deploy until the owner authorizes merge
+# and has created Turnstile + KV. Do not recreate Pages or add DNS records.
+#
+# Dashboard after authorized deploy (no extra DNS):
+#   Workers → this worker → Triggers → Add route
+#     mishtiai.in/api/early-access*
+#     www.mishtiai.in/api/early-access*
+# Zone remains the existing mishtiai.in zone.
+
+name = "mishti-early-access-intake"
+main = "src/index.js"
+compatibility_date = "2025-11-19"
+workers_dev = false
+
+# Owner: wrangler kv namespace create INTAKE
+# then replace this placeholder. Do not commit Access AUD or D1 UUIDs.
+[[kv_namespaces]]
+binding = "INTAKE"
+id = "00000000000000000000000000000000"
+
+# Secrets / vars (dashboard or `wrangler secret put`, never commit real secrets):
+#   TURNSTILE_SITE_KEY
+#   TURNSTILE_SECRET_KEY
+# Optional Email Routing (only if the zone already has Email Routing):
+#   [[send_email]]
+#   name = "INTAKE_EMAIL"
+#   destination_address = "niraventp@gmail.com"
+# and vars INTAKE_FROM / INTAKE_NOTIFY_TO.
