@@ -44,10 +44,10 @@ export function PrivacyNotice() {
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-foreground">Contact and rights requests</h3>
           <p>
-            For questions, access, correction or deletion requests, email
-            {" "}<a className="underline text-primary" href="mailto:niraventp@gmail.com?subject=Mishti%20AI%20Privacy%20Request">niraventp@gmail.com</a>.
-            Correspondence sent by email is used to review and respond to your enquiry and may be retained
-            in the mailbox according to operational and legal requirements.
+            For questions or requests to access, correct, or delete your data, use the
+            {" "}<a className="underline text-primary" href="#access">contact form</a>.
+            We use the details you provide to review and respond to your request.
+            Please share only the information needed to help us identify your request.
           </p>
         </div>
         <div className="space-y-2">
