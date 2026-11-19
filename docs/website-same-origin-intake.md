@@ -17,7 +17,8 @@ Replaces Formspree `mvzdjvlw`. Live CSP is `form-action 'self'` / `connect-src '
 Live Pages stays the existing Direct Upload project. This does **not** recreate Pages, add a hostname, or change apex/www DNS. The Worker is attached with a **route on the existing zone**:
 
 - `mishtiai.in/api/early-access*`
-- `www.mishtiai.in/api/early-access*`
+
+Turnstile widget hostname is **`mishtiai.in` only** (not `www`).
 
 Pages Functions are not used because the live site is a static Direct Upload of `dist/`; a Worker route does not change that publish method.
 
@@ -38,7 +39,7 @@ Pages Functions are not used because the live site is a static Direct Upload of 
 
 Do not paste secret values into GitHub, chat, or this repo.
 
-1. **Turnstile** — widget “Mishti AI Early Access” exists (managed, hostnames `mishtiai.in` / `www.mishtiai.in`, pre-clearance off). Public site key `0x4AAAAAAGISoDHLJ7QQJxlG` is baked in `Access.tsx`. Owner keeps the **secret** in the Cloudflare dashboard and sets it as a Worker secret (do not paste it into git or chat). Dummy always-pass keys are local-only.
+1. **Turnstile** — widget “Mishti AI Early Access” exists (managed, **hostname `mishtiai.in` only**, not `www`, pre-clearance off). Public site key `0x4AAAAAAGISoDHLJ7QQJxlG` is baked in `Access.tsx`. The widget script loads only when GET `/api/early-access` reports `enabled: true`. Owner keeps the **secret** in the Cloudflare dashboard and sets it as a Worker secret (do not paste it into git or chat). Dummy always-pass keys are local-only.
 
 2. **KV**
    ```text
@@ -57,7 +58,7 @@ Do not paste secret values into GitHub, chat, or this repo.
    cd workers/early-access
    wrangler deploy
    ```
-   Then add the two routes above on the existing `mishtiai.in` zone. `workers_dev = false` stays: no extra `workers.dev` hostname.
+   Then add the apex route above on the existing `mishtiai.in` zone. `workers_dev = false` stays: no extra `workers.dev` hostname.
 
 5. **Rebuild and re-upload Pages `dist/`** of the SHA that contains the public site key to the **existing** Pages project. Direct Upload of static files still does not include the Worker; the route handles `/api/early-access`.
 
@@ -81,12 +82,14 @@ PAGES_DIST=.pages-check-dist pnpm run smoke:static
 pnpm dev
 ```
 
-Vite serves `/api/early-access` from the same handler with in-memory KV. The frontend widget uses the public production site key. Local POST may use `dev-local` on localhost only. This is not Cloudflare edge proof.
+Vite serves `/api/early-access` from the same handler with in-memory KV. The frontend widget uses the public production site key **only after** the mock/Worker reports intake enabled. Local POST may use `dev-local` on localhost only. This is not Cloudflare edge proof. Public live intake stays closed until Pages re-upload and Worker deploy.
 
 ## Guards kept
 
 - No Formspree / `mvzdjvlw` in Access source or built JS
+- Turnstile widget mounts only when `config?.enabled` is true
 - `form-action 'self'`
 - No 24-hour response claim
 - AccessModal / PartnerModal stay unmounted
 - Founder Console, P4, P4B, and website PR #6 are out of scope
+- Public live intake stays closed until owner merge + Pages upload + Worker deploy

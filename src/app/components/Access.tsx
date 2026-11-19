@@ -97,7 +97,7 @@ export function Access() {
   }, []);
 
   useEffect(() => {
-    if (!widgetHost.current) return;
+    if (!config?.enabled || !config.siteKey || !widgetHost.current) return;
     let removed = false;
 
     async function mountWidget() {
@@ -129,7 +129,7 @@ export function Access() {
         widgetId.current = null;
       }
     };
-  }, []);
+  }, [config]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

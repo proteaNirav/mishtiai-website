@@ -5,7 +5,7 @@
 # Dashboard after authorized deploy (no extra DNS):
 #   Workers → this worker → Triggers → Add route
 #     mishtiai.in/api/early-access*
-#     www.mishtiai.in/api/early-access*
+# Turnstile widget hostname is mishtiai.in only (not www).
 # Zone remains the existing mishtiai.in zone.
 
 name = "mishti-early-access-intake"

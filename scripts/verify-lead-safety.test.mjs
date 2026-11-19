@@ -9,6 +9,7 @@ test("public site uses same-origin intake, not Formspree", () => {
   assert.match(access, /\/api\/early-access/);
   assert.match(access, /challenges\.cloudflare\.com\/turnstile/);
   assert.match(access, /0x4AAAAAAGISoDHLJ7QQJxlG/);
+  assert.match(access, /if \(!config\?\.enabled \|\| !config\.siteKey \|\| !widgetHost\.current\) return;/);
   assert.match(access, /intake_processing_acknowledged/);
   assert.doesNotMatch(access, /1x00000000000000000000AA/);
   assert.doesNotMatch(access, /formspree|mvzdjvlw|within 24 hours/i);
