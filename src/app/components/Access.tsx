@@ -5,7 +5,6 @@ const TURNSTILE_SCRIPT =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 /** Public Turnstile site key for widget “Mishti AI Early Access”. Not a secret. */
 const PUBLIC_TURNSTILE_SITE_KEY = "0x4AAAAAAGISoDHLJ7QQJxlG";
-const PRIVACY_MAIL = "niraventp@gmail.com";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -191,7 +190,7 @@ export function Access() {
           Get Access to Controlled AI Execution
         </h2>
         <p className="text-muted-foreground mb-10">
-          Submit an early-access request for review. Access is not automatic, and no
+          Use this form for early access, general questions, or privacy requests. Access is not automatic, and no
           response deadline is guaranteed. This public website does not grant access
           to the separate private Founder Console.
         </p>
@@ -208,14 +207,8 @@ export function Access() {
 
         {config && !intakeReady && (
           <p className="mb-8 text-sm text-muted-foreground">
-            Same-origin intake is not active on this host yet. Email{" "}
-            <a
-              className="underline text-primary"
-              href={`mailto:${PRIVACY_MAIL}?subject=Mishti%20AI%20Access%20Request`}
-            >
-              {PRIVACY_MAIL}
-            </a>{" "}
-            for early-access questions.
+            The form is unavailable on this host. Please try again at{" "}
+            <a className="underline text-primary" href="https://mishtiai.in/#access">mishtiai.in</a>.
           </p>
         )}
 
@@ -264,7 +257,7 @@ export function Access() {
           <textarea
             id="access-message"
             name="message"
-            placeholder="What do you want to use Mishti AI for?"
+            placeholder="Tell us about your request"
             rows={5}
             required
             className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground"
@@ -318,8 +311,7 @@ export function Access() {
           )}
           {status === "error" && (
             <p className="text-red-400 text-center">
-              Something went wrong{errorDetail ? ` (${errorDetail})` : ""}. Please email{" "}
-              <a className="underline" href={`mailto:${PRIVACY_MAIL}`}>{PRIVACY_MAIL}</a>.
+              Something went wrong{errorDetail ? ` (${errorDetail})` : ""}. Please try again.
             </p>
           )}
         </form>

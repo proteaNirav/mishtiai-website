@@ -168,3 +168,28 @@ test("unknown path is 404", async () => {
   );
   assert.equal(response.status, 404);
 });
+
+test("POST preserves the request when Resend rejects the private alert", async (t) => {
+  const store = createMemoryKv();
+  const send = t.mock.method(globalThis, "fetch", async () => new Response(null, { status: 429 }));
+  const logger = t.mock.method(console, "warn", () => {});
+  const response = await handleIntakeRequest(request("POST", valid), env({
+    INTAKE: store,
+    RESEND_API_KEY: "test-key",
+    INTAKE_NOTIFY_TO: "owner@example.com",
+  }));
+
+  assert.equal(response.status, 200);
+  const { keys } = await store.list({ prefix: "intake:" });
+  assert.equal(keys.length, 1);
+  const saved = JSON.parse(await store.get(keys[0].name));
+  assert.equal(send.mock.callCount(), 1);
+  const [url, options] = send.mock.calls[0].arguments;
+  assert.equal(url, "https://api.resend.com/emails");
+  const alert = JSON.parse(options.body);
+  assert.deepEqual(alert.to, ["owner@example.com"]);
+  assert.ok(alert.text.includes(saved.id));
+  assert.ok(!alert.text.includes(valid.email));
+  assert.ok(!alert.text.includes(valid.message));
+  assert.equal(logger.mock.callCount(), 1);
+});

@@ -15,7 +15,8 @@ test("notice describes same-origin Cloudflare intake rather than Formspree", () 
   assert.match(notice, /Google Fonts/);
   assert.match(notice, /Turnstile/);
   assert.match(notice, /\/api\/early-access/);
-  assert.match(notice, /niraventp@gmail\.com/);
+  assert.match(notice, /href="#access"/);
+  assert.doesNotMatch(notice, /mailto:/i);
   assert.match(notice, /No response deadline is guaranteed/);
   assert.doesNotMatch(notice, /Formspree|mvzdjvlw|pre-publication draft|within 24 hours/i);
   assert.doesNotMatch(notice, /not currently accepting access-request forms/i);
